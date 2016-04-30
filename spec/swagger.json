@@ -1,0 +1,3713 @@
+{
+  "swagger": "2.0",
+  "host": "www.gov.uk",
+  "schemes": [
+    "https"
+  ],
+  "basePath": "/api",
+  "produces": [
+    "application/json"
+  ],
+  "info": {
+    "version": "1.0.0",
+    "description": "Search API for GOV.UK",
+    "title": "Rummager"
+  },
+  "paths": {
+    "/search.json": {
+      "get": {
+        "description": "Search Gov.uk",
+        "summary": "Search",
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "schema": {
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/document"
+                  }
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "facets": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/facet_result"
+                  }
+                },
+                "suggested_queries": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/suggestion"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "q",
+            "type": "string",
+            "in": "query",
+            "description": "Text to search for"
+          },
+          {
+            "name": "count",
+            "type": "number",
+            "in": "query",
+            "description": "Number of documents to retrieve"
+          },
+          {
+            "name": "start",
+            "type": "integer",
+            "in": "query",
+            "description": "Position in search result list to start returning results (0-based)"
+          },
+          {
+            "name": "order",
+            "type": "string",
+            "in": "query",
+            "description": "The sort order. A fieldname, with an optional preceding '-' to sort in descending order. If not specified, sort order is relevance",
+            "enum": [
+              "closing_date",
+              "public_timestamp",
+              "title",
+              "tribunal_decision_decision_date"
+            ]
+          },
+          {
+            "name": "fields",
+            "type": "array",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "description": "Fields to return",
+            "default": [
+              "description",
+              "display_type",
+              "document_series",
+              "format",
+              "link",
+              "organisations",
+              "policy_areas",
+              "public_timestamp",
+              "slug",
+              "specialist_sectors",
+              "title",
+              "topics",
+              "world_locations"
+            ]
+          },
+          {
+            "name": "debug",
+            "type": "array",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "description": "Debug flags",
+            "default": [
+
+            ]
+          },
+          {
+            "name": "filter_format",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this format value"
+          },
+          {
+            "name": "reject_format",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this format value"
+          },
+          {
+            "name": "filter_content_id",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this content_id value"
+          },
+          {
+            "name": "reject_content_id",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this content_id value"
+          },
+          {
+            "name": "filter_link",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this link value"
+          },
+          {
+            "name": "reject_link",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this link value"
+          },
+          {
+            "name": "filter_organisations",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this organisations value"
+          },
+          {
+            "name": "reject_organisations",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this organisations value"
+          },
+          {
+            "name": "filter_specialist_sectors",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this specialist_sectors value"
+          },
+          {
+            "name": "reject_specialist_sectors",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this specialist_sectors value"
+          },
+          {
+            "name": "filter_policies",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this policies value"
+          },
+          {
+            "name": "reject_policies",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this policies value"
+          },
+          {
+            "name": "filter_policy_areas",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this policy_areas value"
+          },
+          {
+            "name": "reject_policy_areas",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this policy_areas value"
+          },
+          {
+            "name": "filter_mainstream_browse_pages",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this mainstream_browse_pages value"
+          },
+          {
+            "name": "reject_mainstream_browse_pages",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this mainstream_browse_pages value"
+          },
+          {
+            "name": "filter_updated_at",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this updated_at value"
+          },
+          {
+            "name": "reject_updated_at",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this updated_at value"
+          },
+          {
+            "name": "filter_public_timestamp",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this public_timestamp value"
+          },
+          {
+            "name": "reject_public_timestamp",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this public_timestamp value"
+          },
+          {
+            "name": "filter_id",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this id value"
+          },
+          {
+            "name": "reject_id",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this id value"
+          },
+          {
+            "name": "filter_detailed_format",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this detailed_format value"
+          },
+          {
+            "name": "reject_detailed_format",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this detailed_format value"
+          },
+          {
+            "name": "filter_display_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this display_type value"
+          },
+          {
+            "name": "reject_display_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this display_type value"
+          },
+          {
+            "name": "filter_document_collections",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this document_collections value"
+          },
+          {
+            "name": "reject_document_collections",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this document_collections value"
+          },
+          {
+            "name": "filter_document_series",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this document_series value"
+          },
+          {
+            "name": "reject_document_series",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this document_series value"
+          },
+          {
+            "name": "filter_release_timestamp",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this release_timestamp value"
+          },
+          {
+            "name": "reject_release_timestamp",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this release_timestamp value"
+          },
+          {
+            "name": "filter_operational_field",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this operational_field value"
+          },
+          {
+            "name": "reject_operational_field",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this operational_field value"
+          },
+          {
+            "name": "filter_organisation_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this organisation_state value"
+          },
+          {
+            "name": "reject_organisation_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this organisation_state value"
+          },
+          {
+            "name": "filter_organisation_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this organisation_type value"
+          },
+          {
+            "name": "reject_organisation_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this organisation_type value"
+          },
+          {
+            "name": "filter_people",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this people value"
+          },
+          {
+            "name": "reject_people",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this people value"
+          },
+          {
+            "name": "filter_policy_groups",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this policy_groups value"
+          },
+          {
+            "name": "reject_policy_groups",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this policy_groups value"
+          },
+          {
+            "name": "filter_search_format_types",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this search_format_types value"
+          },
+          {
+            "name": "reject_search_format_types",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this search_format_types value"
+          },
+          {
+            "name": "filter_slug",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this slug value"
+          },
+          {
+            "name": "reject_slug",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this slug value"
+          },
+          {
+            "name": "filter_statistics_announcement_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this statistics_announcement_state value"
+          },
+          {
+            "name": "reject_statistics_announcement_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this statistics_announcement_state value"
+          },
+          {
+            "name": "filter_topics",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this topics value"
+          },
+          {
+            "name": "reject_topics",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this topics value"
+          },
+          {
+            "name": "filter_world_locations",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this world_locations value"
+          },
+          {
+            "name": "reject_world_locations",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this world_locations value"
+          },
+          {
+            "name": "filter_aircraft_category",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this aircraft_category value"
+          },
+          {
+            "name": "reject_aircraft_category",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this aircraft_category value"
+          },
+          {
+            "name": "filter_report_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this report_type value"
+          },
+          {
+            "name": "reject_report_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this report_type value"
+          },
+          {
+            "name": "filter_date_of_occurrence",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this date_of_occurrence value"
+          },
+          {
+            "name": "reject_date_of_occurrence",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this date_of_occurrence value"
+          },
+          {
+            "name": "filter_location",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this location value"
+          },
+          {
+            "name": "reject_location",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this location value"
+          },
+          {
+            "name": "filter_case_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this case_type value"
+          },
+          {
+            "name": "reject_case_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this case_type value"
+          },
+          {
+            "name": "filter_case_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this case_state value"
+          },
+          {
+            "name": "reject_case_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this case_state value"
+          },
+          {
+            "name": "filter_market_sector",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this market_sector value"
+          },
+          {
+            "name": "reject_market_sector",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this market_sector value"
+          },
+          {
+            "name": "filter_outcome_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this outcome_type value"
+          },
+          {
+            "name": "reject_outcome_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this outcome_type value"
+          },
+          {
+            "name": "filter_opened_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this opened_date value"
+          },
+          {
+            "name": "reject_opened_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this opened_date value"
+          },
+          {
+            "name": "filter_closed_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this closed_date value"
+          },
+          {
+            "name": "reject_closed_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this closed_date value"
+          },
+          {
+            "name": "filter_contact_group",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this contact_group value"
+          },
+          {
+            "name": "reject_contact_group",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this contact_group value"
+          },
+          {
+            "name": "filter_grant_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this grant_type value"
+          },
+          {
+            "name": "reject_grant_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this grant_type value"
+          },
+          {
+            "name": "filter_land_use",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this land_use value"
+          },
+          {
+            "name": "reject_land_use",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this land_use value"
+          },
+          {
+            "name": "filter_tiers_or_standalone_items",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tiers_or_standalone_items value"
+          },
+          {
+            "name": "reject_tiers_or_standalone_items",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tiers_or_standalone_items value"
+          },
+          {
+            "name": "filter_funding_amount",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this funding_amount value"
+          },
+          {
+            "name": "reject_funding_amount",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this funding_amount value"
+          },
+          {
+            "name": "filter_therapeutic_area",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this therapeutic_area value"
+          },
+          {
+            "name": "reject_therapeutic_area",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this therapeutic_area value"
+          },
+          {
+            "name": "filter_first_published_at",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this first_published_at value"
+          },
+          {
+            "name": "reject_first_published_at",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this first_published_at value"
+          },
+          {
+            "name": "filter_fund_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this fund_state value"
+          },
+          {
+            "name": "reject_fund_state",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this fund_state value"
+          },
+          {
+            "name": "filter_fund_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this fund_type value"
+          },
+          {
+            "name": "reject_fund_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this fund_type value"
+          },
+          {
+            "name": "filter_funding_source",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this funding_source value"
+          },
+          {
+            "name": "reject_funding_source",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this funding_source value"
+          },
+          {
+            "name": "filter_closing_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this closing_date value"
+          },
+          {
+            "name": "reject_closing_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this closing_date value"
+          },
+          {
+            "name": "filter_manual",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this manual value"
+          },
+          {
+            "name": "reject_manual",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this manual value"
+          },
+          {
+            "name": "filter_hmrc_manual_section_id",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this hmrc_manual_section_id value"
+          },
+          {
+            "name": "reject_hmrc_manual_section_id",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this hmrc_manual_section_id value"
+          },
+          {
+            "name": "filter_development_sector",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this development_sector value"
+          },
+          {
+            "name": "reject_development_sector",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this development_sector value"
+          },
+          {
+            "name": "filter_eligible_entities",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this eligible_entities value"
+          },
+          {
+            "name": "reject_eligible_entities",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this eligible_entities value"
+          },
+          {
+            "name": "filter_value_of_funding",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this value_of_funding value"
+          },
+          {
+            "name": "reject_value_of_funding",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this value_of_funding value"
+          },
+          {
+            "name": "filter_vessel_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this vessel_type value"
+          },
+          {
+            "name": "reject_vessel_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this vessel_type value"
+          },
+          {
+            "name": "filter_alert_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this alert_type value"
+          },
+          {
+            "name": "reject_alert_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this alert_type value"
+          },
+          {
+            "name": "filter_medical_specialism",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this medical_specialism value"
+          },
+          {
+            "name": "reject_medical_specialism",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this medical_specialism value"
+          },
+          {
+            "name": "filter_issued_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this issued_date value"
+          },
+          {
+            "name": "reject_issued_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this issued_date value"
+          },
+          {
+            "name": "filter_railway_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this railway_type value"
+          },
+          {
+            "name": "reject_railway_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this railway_type value"
+          },
+          {
+            "name": "filter_stemmed_query_as_term",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this stemmed_query_as_term value"
+          },
+          {
+            "name": "reject_stemmed_query_as_term",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this stemmed_query_as_term value"
+          },
+          {
+            "name": "filter_path_components",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this path_components value"
+          },
+          {
+            "name": "reject_path_components",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this path_components value"
+          },
+          {
+            "name": "filter_fault_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this fault_type value"
+          },
+          {
+            "name": "reject_fault_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this fault_type value"
+          },
+          {
+            "name": "filter_faulty_item_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this faulty_item_type value"
+          },
+          {
+            "name": "reject_faulty_item_type",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this faulty_item_type value"
+          },
+          {
+            "name": "filter_manufacturer",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this manufacturer value"
+          },
+          {
+            "name": "reject_manufacturer",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this manufacturer value"
+          },
+          {
+            "name": "filter_serial_number",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this serial_number value"
+          },
+          {
+            "name": "reject_serial_number",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this serial_number value"
+          },
+          {
+            "name": "filter_faulty_item_model",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this faulty_item_model value"
+          },
+          {
+            "name": "reject_faulty_item_model",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this faulty_item_model value"
+          },
+          {
+            "name": "filter_alert_issue_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this alert_issue_date value"
+          },
+          {
+            "name": "reject_alert_issue_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this alert_issue_date value"
+          },
+          {
+            "name": "filter_build_start_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this build_start_date value"
+          },
+          {
+            "name": "reject_build_start_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this build_start_date value"
+          },
+          {
+            "name": "filter_build_end_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this build_end_date value"
+          },
+          {
+            "name": "reject_build_end_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this build_end_date value"
+          },
+          {
+            "name": "filter_tribunal_decision_categories",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_categories value"
+          },
+          {
+            "name": "reject_tribunal_decision_categories",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_categories value"
+          },
+          {
+            "name": "filter_tribunal_decision_categories_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_categories_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_categories_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_categories_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_country",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_country value"
+          },
+          {
+            "name": "reject_tribunal_decision_country",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_country value"
+          },
+          {
+            "name": "filter_tribunal_decision_country_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_country_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_country_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_country_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_decision_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Include documents with this tribunal_decision_decision_date value"
+          },
+          {
+            "name": "reject_tribunal_decision_decision_date",
+            "in": "query",
+            "type": "string",
+            "format": "date",
+            "description": "Exclude documents with this tribunal_decision_decision_date value"
+          },
+          {
+            "name": "filter_tribunal_decision_judges",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_judges value"
+          },
+          {
+            "name": "reject_tribunal_decision_judges",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_judges value"
+          },
+          {
+            "name": "filter_tribunal_decision_judges_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_judges_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_judges_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_judges_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_category",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_category value"
+          },
+          {
+            "name": "reject_tribunal_decision_category",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_category value"
+          },
+          {
+            "name": "filter_tribunal_decision_category_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_category_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_category_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_category_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_sub_category",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_sub_category value"
+          },
+          {
+            "name": "reject_tribunal_decision_sub_category",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_sub_category value"
+          },
+          {
+            "name": "filter_tribunal_decision_sub_category_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_sub_category_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_sub_category_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_sub_category_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_sub_categories",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_sub_categories value"
+          },
+          {
+            "name": "reject_tribunal_decision_sub_categories",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_sub_categories value"
+          },
+          {
+            "name": "filter_tribunal_decision_sub_categories_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_sub_categories_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_sub_categories_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_sub_categories_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_landmark",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_landmark value"
+          },
+          {
+            "name": "reject_tribunal_decision_landmark",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_landmark value"
+          },
+          {
+            "name": "filter_tribunal_decision_landmark_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_landmark_name value"
+          },
+          {
+            "name": "reject_tribunal_decision_landmark_name",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_landmark_name value"
+          },
+          {
+            "name": "filter_tribunal_decision_reference_number",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Include documents with this tribunal_decision_reference_number value"
+          },
+          {
+            "name": "reject_tribunal_decision_reference_number",
+            "in": "query",
+            "type": "string",
+            "format": "string",
+            "description": "Exclude documents with this tribunal_decision_reference_number value"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "edition": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "acronym": {
+              "type": "string",
+              "description": ""
+            },
+            "attachments": {
+              "type": "string",
+              "description": ""
+            },
+            "detailed_format": {
+              "type": "string",
+              "description": "A slugified version of the display_type field"
+            },
+            "display_type": {
+              "type": "string",
+              "description": ""
+            },
+            "document_collections": {
+              "type": "string",
+              "description": ""
+            },
+            "document_series": {
+              "type": "string",
+              "description": ""
+            },
+            "government_name": {
+              "type": "string",
+              "description": "The name of the Government that first published this document, eg, '1970 to 1974 Conservative government'"
+            },
+            "has_act_paper": {
+              "type": "string",
+              "description": ""
+            },
+            "has_command_paper": {
+              "type": "string",
+              "description": ""
+            },
+            "has_official_document": {
+              "type": "string",
+              "description": ""
+            },
+            "id": {
+              "type": "string",
+              "description": ""
+            },
+            "important_to_policy": {
+              "type": "string",
+              "description": "A flag set by editors to mark a document as being important to policy"
+            },
+            "is_historic": {
+              "type": "string",
+              "description": "If the content is political and published by a previous government, it is considered historic and not reflecting of the current government"
+            },
+            "is_political": {
+              "type": "string",
+              "description": "If the content is considered political in nature, reflecting views of the government it was published under"
+            },
+            "metadata": {
+              "type": "string",
+              "description": "The \"metadata\" field is intended for the storage of additional non-searchable document data. This allows additional information to be stored and displayed in search results without having to make changes to the schema."
+            },
+            "operational_field": {
+              "type": "string",
+              "description": ""
+            },
+            "organisation_state": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "people": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "policy_areas": {
+              "type": "string",
+              "description": "Policy areas are managed in Whitehall. They're an old grouping of policies, which we're expecting to deprecate soon."
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "release_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "relevant_to_local_government": {
+              "type": "string",
+              "description": ""
+            },
+            "search_format_types": {
+              "type": "string",
+              "description": ""
+            },
+            "slug": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "statistics_announcement_state": {
+              "type": "string",
+              "description": ""
+            },
+            "topics": {
+              "type": "string",
+              "description": "The policy areas that the document is associated with.  Nothing to do with \"specialist sectors\""
+            },
+            "world_locations": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "aaib_report": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "aircraft_category": {
+              "type": "string",
+              "description": ""
+            },
+            "report_type": {
+              "type": "string",
+              "description": ""
+            },
+            "date_of_occurrence": {
+              "type": "string",
+              "description": ""
+            },
+            "registration": {
+              "type": "string",
+              "description": ""
+            },
+            "aircraft_type": {
+              "type": "string",
+              "description": ""
+            },
+            "location": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "asylum_support_decision": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "tribunal_decision_category": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_category_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_decision_date": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_judges": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_judges_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_landmark": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_landmark_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_reference_number": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_sub_category": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_sub_category_name": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "cma_case": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "case_type": {
+              "type": "string",
+              "description": ""
+            },
+            "case_state": {
+              "type": "string",
+              "description": ""
+            },
+            "market_sector": {
+              "type": "string",
+              "description": ""
+            },
+            "outcome_type": {
+              "type": "string",
+              "description": ""
+            },
+            "opened_date": {
+              "type": "string",
+              "description": ""
+            },
+            "closed_date": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "contact": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "contact_group": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "countryside_stewardship_grant": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "grant_type": {
+              "type": "string",
+              "description": ""
+            },
+            "land_use": {
+              "type": "string",
+              "description": ""
+            },
+            "tiers_or_standalone_items": {
+              "type": "string",
+              "description": ""
+            },
+            "funding_amount": {
+              "type": "string",
+              "description": "Funding (per unit per year)"
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "drug_safety_update": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "therapeutic_area": {
+              "type": "string",
+              "description": ""
+            },
+            "first_published_at": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "employment_appeal_tribunal_decision": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "tribunal_decision_categories": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_categories_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_decision_date": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_landmark": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_landmark_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_sub_categories": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_sub_categories_name": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "employment_tribunal_decision": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "tribunal_decision_categories": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_categories_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_country": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_country_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_decision_date": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "european_structural_investment_fund": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "fund_state": {
+              "type": "string",
+              "description": ""
+            },
+            "fund_type": {
+              "type": "string",
+              "description": ""
+            },
+            "location": {
+              "type": "string",
+              "description": ""
+            },
+            "funding_source": {
+              "type": "string",
+              "description": ""
+            },
+            "closing_date": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "hmrc_manual": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "hmrc_manual_section": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "manual": {
+              "type": "string",
+              "description": ""
+            },
+            "hmrc_manual_section_id": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "international_development_fund": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "fund_state": {
+              "type": "string",
+              "description": ""
+            },
+            "location": {
+              "type": "string",
+              "description": ""
+            },
+            "development_sector": {
+              "type": "string",
+              "description": ""
+            },
+            "eligible_entities": {
+              "type": "string",
+              "description": ""
+            },
+            "value_of_funding": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "maib_report": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "vessel_type": {
+              "type": "string",
+              "description": ""
+            },
+            "report_type": {
+              "type": "string",
+              "description": ""
+            },
+            "date_of_occurrence": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "manual": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "manual_section": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "manual": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "medical_safety_alert": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "alert_type": {
+              "type": "string",
+              "description": ""
+            },
+            "medical_specialism": {
+              "type": "string",
+              "description": ""
+            },
+            "issued_date": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "policy": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "slug": {
+              "type": "string",
+              "description": ""
+            },
+            "people": {
+              "type": "string",
+              "description": ""
+            },
+            "policy_groups": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "raib_report": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "railway_type": {
+              "type": "string",
+              "description": ""
+            },
+            "report_type": {
+              "type": "string",
+              "description": ""
+            },
+            "date_of_occurrence": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "service_manual_guide": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "manual": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "service_manual_topic": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "manual": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "tax_tribunal_decision": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "tribunal_decision_category": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_category_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_decision_date": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "utaac_decision": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "tribunal_decision_categories": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_categories_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_decision_date": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_judges": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_judges_name": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_sub_categories": {
+              "type": "string",
+              "description": ""
+            },
+            "tribunal_decision_sub_categories_name": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "vehicle_recalls_and_faults_alert": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/document"
+        },
+        {
+          "properties": {
+            "fault_type": {
+              "type": "string",
+              "description": ""
+            },
+            "alert_issue_date": {
+              "type": "string",
+              "description": ""
+            },
+            "faulty_item_type": {
+              "type": "string",
+              "description": ""
+            },
+            "manufacturer": {
+              "type": "string",
+              "description": ""
+            },
+            "faulty_item_model": {
+              "type": "string",
+              "description": ""
+            },
+            "serial_number": {
+              "type": "string",
+              "description": ""
+            },
+            "build_start_date": {
+              "type": "string",
+              "description": ""
+            },
+            "build_end_date": {
+              "type": "string",
+              "description": ""
+            },
+            "all_searchable_text": {
+              "type": "string",
+              "description": "Special field which searchable text is copied into; similar to the standard `_all` field, but more customisable"
+            },
+            "content_id": {
+              "type": "string",
+              "description": "The content_id of the item. This will not be present for all items, as most application do not send it."
+            },
+            "description": {
+              "type": "string",
+              "description": ""
+            },
+            "format": {
+              "type": "string",
+              "description": ""
+            },
+            "indexable_content": {
+              "type": "string",
+              "description": ""
+            },
+            "is_withdrawn": {
+              "type": "string",
+              "description": "If the content has been published but then withdrawn"
+            },
+            "latest_change_note": {
+              "type": "string",
+              "description": ""
+            },
+            "link": {
+              "type": "string",
+              "description": "The link to the document.  This is usually the path component of the URL of the document, including a leading slash, but sometimes omits the leading slash, and is sometimes an absolute URL of related content which does not appear on GOV.UK"
+            },
+            "mainstream_browse_pages": {
+              "type": "string",
+              "description": ""
+            },
+            "organisations": {
+              "type": "string",
+              "description": ""
+            },
+            "policies": {
+              "type": "string",
+              "description": ""
+            },
+            "popularity": {
+              "type": "string",
+              "description": ""
+            },
+            "public_timestamp": {
+              "type": "string",
+              "description": ""
+            },
+            "specialist_sectors": {
+              "type": "string",
+              "description": "The navigation \"topics\" that the document is assigned to.  Nothing to do with \"policy areas\""
+            },
+            "spelling_text": {
+              "type": "string",
+              "description": "Generated field, populated with the same content as sent to the _all field, but tokenised into words, lowercased and shingled, not stemmed, etc"
+            },
+            "title": {
+              "type": "string",
+              "description": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "document": {
+      "required": [
+        "document_type",
+        "es_score",
+        "_id",
+        "_link",
+        "index"
+      ],
+      "discriminator": "document_type",
+      "properties": {
+        "document_type": {
+          "type": "string"
+        },
+        "es_score": {
+          "type": "number"
+        },
+        "_id": {
+          "type": "string"
+        },
+        "_link": {
+          "type": "string"
+        },
+        "_explanation": {
+          "type": "object"
+        },
+        "index": {
+          "type": "string"
+        },
+        "title_with_highlighting": {
+          "type": "string"
+        },
+        "description_with_highlighting": {
+          "type": "string"
+        }
+      }
+    },
+    "option": {
+      "properties": {
+        "value": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "facet_result": {
+      "properties": {
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/option"
+          }
+        },
+        "documents_with_no_value": {
+          "type": "integer"
+        },
+        "total_options": {
+          "type": "integer"
+        },
+        "missing_options": {
+          "type": "integer"
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "exclude_field_filter",
+            "all_filters"
+          ]
+        }
+      }
+    },
+    "suggestion": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

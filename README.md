@@ -38,6 +38,26 @@ from the search index by their links.
 Rummager search results are weighted by [popularity](docs/popularity.md). We
 rebuild the index nightly to incorporate the latest analytics.
 
+### Generating swagger documentation
+
+To generate the API specification, run
+
+```
+bundle exec rake swagger
+```
+
+To validate the schema, you can use [swagger-cli](https://www.npmjs.com/package/swagger-cli)
+
+```
+swagger validate <file.json>
+```
+
+To serve the documentation:
+
+1. Run `go get github.com/zxchris/swaggerly`
+2. Follow the installation instructions on https://github.com/zxchris/swaggerly
+3. Run `./swaggerly -spec-dir=/path/to/rummager -assets-dir=/path/to/rummager/docs/assets/`
+
 ## Nomenclature
 
 - **Link**: Either the base path for a content item, or an external link.

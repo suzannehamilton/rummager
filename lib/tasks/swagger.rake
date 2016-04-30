@@ -1,104 +1,156 @@
 require 'app'
+require 'swagger/blocks'
 
 class SwaggerSpec
+  include Swagger::Blocks
+
   # TODO: refactor code in SearchParameterParser to use this constant.
   ALLOWED_DEBUG_VALUES = %w[disable_best_bets disable_popularity disable_synonyms
                             new_weighting explain]
 
-  def initialize(schema)
-    @schema = schema
+  def self.content_index_names
+    Rummager.settings.search_config.content_index_names
   end
 
-  def docs
-    {
-      swagger: '2.0',
-      info: {
-        title: "GOV.UK Search",
-        description: "Search API for GOV.UK",
-        version: "1.0.0",
-      },
-      host: 'www.gov.uk',
-      schemes: ['https'],
-      basePath: "/api",
-      produces: ['application/json'],
-      paths: {
-        '/search.json' => {
-          get: {
-            summary: 'Do a search',
-            parameters: parameters
-          }
-        }
-      }
-    }
+  def self.schema_config
+    @schema_config ||= Rummager.settings.search_config.schema_config
   end
 
-private
-
-  def parameters
-    (core_args + possible_filters).map { |e| e.merge(in: "query") }
+  def self.document_types
+      @config ||= begin
+          self.schema_config.document_types('government')
+            .merge(self.schema_config.document_types('mainstream'))
+            .merge(self.schema_config.document_types('detailed'))
+            .merge(self.schema_config.document_types('service-manual'))
+      end
   end
 
-  def core_args
-    [
-      {
-        name: "q",
-        type: "string",
-        description: "Text to search for",
-      },
-      {
-        name: "count",
-        type: "number",
-        description: "Number of documents to retrieve",
-      },
-      {
-        type: "integer",
-        name: "start",
-        description: "Position in search result list to start returning results (0-based)"
-      },
-      {
-        type: "string",
-        name: "order",
-        description: "The sort order. A fieldname, with an optional preceding '-' to sort in descending order. If not specified, sort order is relevance",
-        enum: BaseParameterParser::ALLOWED_SORT_FIELDS.sort
-      },
-      {
-        type: "array",
-        name: "fields",
+  def self.success_response(op)
+      op.response 200, description: "Success response" do
+          schema do
+              property :results, type: :array, items: {'$ref' => "#/definitions/document"}
+              property :total, type: :integer
+              property :start, type: :integer
+              property :facets, type: :array, items: {'$ref' => "#/definitions/facet_result"}
+
+              property :suggested_queries, type: :array,
+                  items: {'$ref' => "#/definitions/suggestion"}
+          end
+      end
+  end
+
+  def self.core_args(op)
+      op.parameter name: :q, type: :string, in: :query,
+          description: "Text to search for"
+
+      op.parameter name: :count, type: :number, in: :query,
+          description: "Number of documents to retrieve"
+
+      op.parameter name: :start, type: :integer, in: :query,
+          description: "Position in search result list to start returning results (0-based)"
+
+      op.parameter name: :order, type: :string, in: :query,
+          description: "The sort order. A fieldname, with an optional preceding '-' to sort in descending order. If not specified, sort order is relevance",
+          enum: BaseParameterParser::ALLOWED_SORT_FIELDS.sort
+
+      op.parameter name: :fields, type: :array, in: :query, items: {type: :string},
         description: "Fields to return",
-        default: BaseParameterParser::DEFAULT_RETURN_FIELDS.sort,
-        enum: @schema.field_definitions.keys.sort
-      },
-      {
-        type: "array",
-        name: "debug",
-        description: "Debug flags",
-        default: [],
-        enum: ALLOWED_DEBUG_VALUES.sort
-      },
-    ]
+        default: BaseParameterParser::DEFAULT_RETURN_FIELDS.sort
+        #enum: self.schema_config.field_definitions.keys.sort
+
+      op.parameter name: :debug, type: :array, in: :query, items: {type: :string},
+          description: "Debug flags",
+          default: []
+          #enum: ALLOWED_DEBUG_VALUES.sort
   end
 
-  def possible_filters
-    @schema.field_definitions.map do |name, defo|
+  def self.possible_filters(op)
+    schema_config.field_definitions.each do |name, defo|
       next unless defo.type.filter_type
-      type = defo.type.filter_type == 'date' ? 'date' : 'string'
+      format = defo.type.filter_type == 'date' ? 'date' : 'string'
 
-      {
-        type: type,
-        name: "filter_#{name}",
-        description: defo.description,
-      }
-    end.compact
+      op.parameter name: "filter_#{name}", in: :query,
+        type: "string",
+        format: format,
+        description: "Include documents with this #{name} value"
+
+      op.parameter name: "reject_#{name}", in: :query,
+        type: "string",
+        format: format,
+        description: "Exclude documents with this #{name} value"
+    end
+  end
+
+  SwaggerSpec.document_types.each do |name, document_type|
+      # TODO parse types, children
+      # handle entity expansion etc
+      # handle array types (see result presenter)
+      $stderr.puts "Generating definition for #{name}"
+      swagger_schema name do
+          allOf do
+            schema '$ref' => "#/definitions/document"
+
+            schema do
+              document_type.fields.values.each do |field|
+                property field.name, type: :string, description: field.description
+              end
+            end
+          end
+      end
+  end
+
+  swagger_schema :document do
+    key :required, [:document_type, :es_score, :_id, :_link, :index]
+    key :discriminator, :document_type
+
+    property :document_type, type: :string
+    property :es_score, type: :number
+    property :_id, type: :string
+    property :_link, type: :string
+    property :_explanation, type: :object
+    property :index, type: :string
+    property :title_with_highlighting, type: :string
+    property :description_with_highlighting, type: :string
+  end
+
+  swagger_schema :option do
+    property :value, type: :object do
+        property :slug, type: :string
+    end
+  end
+
+  swagger_schema :facet_result do
+      property :options, type: :array, items: {"$ref" => "#/definitions/option"}
+      property :documents_with_no_value, type: :integer
+      property :total_options, type: :integer
+      property :missing_options, type: :integer
+      property :scope, type: :string, enum: ["exclude_field_filter", "all_filters"]
+  end
+
+  swagger_schema :suggestion, type: :array, items: {type: :string}
+
+  swagger_root swagger: '2.0',
+               host: 'www.gov.uk',
+               schemes: ['https'],
+               basePath: '/api',
+               produces: ['application/json'] do
+
+      info version: '1.0.0',
+           description: "Search API for GOV.UK",
+           title: "Rummager"
+  end
+
+  swagger_path '/search.json' do
+      operation :get, description: 'Search Gov.uk', summary: "Search" do
+
+          SwaggerSpec.success_response(self)
+          SwaggerSpec.core_args(self)
+          SwaggerSpec.possible_filters(self)
+      end
   end
 end
 
 desc "Generate a swagger definition. Experimental."
 task :swagger do
-  unified_index_schema = CombinedIndexSchema.new(
-    Rummager.settings.search_config.content_index_names,
-    Rummager.settings.search_config.schema_config
-  )
-
-  docs = SwaggerSpec.new(unified_index_schema).docs
-  puts JSON.pretty_generate(docs)
+  puts JSON.pretty_generate(Swagger::Blocks.build_root_json([SwaggerSpec]))
 end

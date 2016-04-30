@@ -43,6 +43,8 @@ end
 
 gem "govuk-lint", "~> 1.0.0"
 
+gem 'swagger-blocks'
+
 group :test do
   gem "test-unit-minitest", "~> 0.9.1"
   gem "minitest-colorize", "~> 0.0.5"
@@ -59,4 +61,5 @@ end
 group :development do
   # (Intelligent) reloading server in development
   gem "mr-sparkle", "0.3.0"
+  gem "pry-byebug"
 end
