@@ -28,6 +28,7 @@ class SwaggerSpec
   def self.success_response(op)
       op.response 200, description: "Success response" do
           schema do
+              key :title, "Search results"
               property :results, type: :array, items: {'$ref' => "#/definitions/document"}
               property :total, type: :integer
               property :start, type: :integer
@@ -87,6 +88,7 @@ class SwaggerSpec
       # handle array types (see result presenter)
       $stderr.puts "Generating definition for #{name}"
       swagger_schema name do
+          key :title, name
           allOf do
             schema '$ref' => "#/definitions/document"
 
@@ -102,6 +104,7 @@ class SwaggerSpec
   swagger_schema :document do
     key :required, [:document_type, :es_score, :_id, :_link, :index]
     key :discriminator, :document_type
+    key :title, "Document"
 
     property :document_type, type: :string
     property :es_score, type: :number
@@ -114,12 +117,14 @@ class SwaggerSpec
   end
 
   swagger_schema :option do
+    key :title, "Option"
     property :value, type: :object do
         property :slug, type: :string
     end
   end
 
   swagger_schema :facet_result do
+      key :title, "Facet result"
       property :options, type: :array, items: {"$ref" => "#/definitions/option"}
       property :documents_with_no_value, type: :integer
       property :total_options, type: :integer
@@ -127,7 +132,7 @@ class SwaggerSpec
       property :scope, type: :string, enum: ["exclude_field_filter", "all_filters"]
   end
 
-  swagger_schema :suggestion, type: :array, items: {type: :string}
+  swagger_schema :suggestion, type: :array, items: {type: :string}, title: "Suggestion"
 
   swagger_root swagger: '2.0',
                host: 'www.gov.uk',
