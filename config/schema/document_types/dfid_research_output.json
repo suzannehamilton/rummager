@@ -1,5 +1,9 @@
 {
   "fields": [
-    "country"
+    "region",
+    "country_code",
+    "country_name",
+    "theme",
+    "published_date"
   ]
 }

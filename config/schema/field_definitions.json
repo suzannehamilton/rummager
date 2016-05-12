@@ -213,7 +213,23 @@
     "type": "identifiers"
   },
 
-  "country": {
+  "country_code": {
+    "type": "identifiers"
+  },
+
+  "country_name": {
+    "type": "searchable_identifier"
+  },
+
+  "theme": {
+    "type": "identifiers"
+  },
+
+  "region": {
+    "type": "identifiers"
+  },
+
+  "published_date": {
     "type": "identifiers"
   },
 
