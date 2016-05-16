@@ -213,8 +213,12 @@
     "type": "identifiers"
   },
 
-  "country": {
+  "country_code": {
     "type": "identifiers"
+  },
+
+  "country_name": {
+    "type": "searchable_identifiers"
   },
 
   "market_sector": {
