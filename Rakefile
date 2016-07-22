@@ -39,6 +39,10 @@ def logger
   Logging.logger.root
 end
 
+def settings
+  Sinatra::Application.settings
+end
+
 def search_config
   settings.search_config
 end

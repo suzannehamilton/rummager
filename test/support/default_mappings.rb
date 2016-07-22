@@ -8,6 +8,8 @@ module Fixtures
             "title" => { "type" => "string", "index" => "analyzed" },
             "description" => { "type" => "string", "index" => "analyzed" },
             "format" => { "type" => "string", "index" => "not_analyzed", "include_in_all" => false },
+            "document_type" => { "type" => "string", "index" => "not_analyzed", "include_in_all" => false },
+            "schema_name" => { "type" => "string", "index" => "not_analyzed", "include_in_all" => false },
             "link" => { "type" => "string", "index" => "not_analyzed", "include_in_all" => false },
             "indexable_content" => { "type" => "string", "index" => "analyzed" },
             "mainstream_browse_pages" => { "type" => "string", "index" => "not_analyzed", "include_in_all" => false },

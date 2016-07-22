@@ -23,6 +23,32 @@ namespace :message_queue do
       queue_name: "rummager_to_be_indexed",
       processor: Indexer::MessageProcessor.new(statsd_client),
       statsd_client: statsd_client,
+    ).run
+  end
+
+  task :trigger_email_alerts do
+    # The following environment variables need to be set
+    # RABBITMQ_HOSTS
+    # RABBITMQ_VHOST
+    # RABBITMQ_USER
+    # RABBITMQ_PASSWORD
+
+    # Load Airbrake to make govuk_message_queue_consumer send error notifications.
+    require 'airbrake'
+    require 'govuk_message_queue_consumer'
+    require 'message_percolator'
+    require 'statsd'
+    require 'logger'
+
+    statsd_client = Statsd.new
+    statsd_client.namespace = "govuk.app.rummager"
+
+    puts "Starting message queue consumer"
+
+    GovukMessageQueueConsumer::Consumer.new(
+      queue_name: "rummager_to_be_indexed",
+      processor: MessagePercolator.new,
+      statsd_client: statsd_client,
       logger: Logging.logger.root,
     ).run
   end

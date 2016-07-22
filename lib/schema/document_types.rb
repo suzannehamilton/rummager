@@ -130,7 +130,7 @@ private
     files = Dir.new(File.join(config_path, "document_types"))
 
     json_files = files.select do |filename|
-      filename =~ /\A[a-z][-_a-z]*\.json\z/
+      filename =~ /\A\.?[a-z][-_a-z]*\.json\z/
     end
 
     json_files.map do |filename|

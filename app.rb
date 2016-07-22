@@ -239,4 +239,11 @@ class Rummager < Sinatra::Application
     end
     status.to_json
   end
+
+  post "/government/register-percolation-query" do
+    government_index = search_server.index("government")
+    post_params = JSON.parse(request.body.read)
+    query = post_params["query"]
+    simple_json_result(government_index.register_percolation_query(query))
+  end
 end

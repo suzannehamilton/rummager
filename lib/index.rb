@@ -11,6 +11,7 @@ require "search/result_set"
 require "indexer"
 require "indexer/amender"
 require "document"
+require "securerandom"
 
 module SearchIndices
   class IndexLocked < RuntimeError; end
@@ -249,6 +250,108 @@ module SearchIndices
 
     def commit
       @client.post "_refresh", nil
+    end
+
+    def register_percolation_query(query, uuid: SecureRandom.uuid)
+      percolation_query = {}
+      matches = query["matches"] || {}
+      filters = query["filters"] || {}
+      ranges = query["ranges"] || {}
+
+      if matches.any?
+        percolation_query["match"] = matches
+      end
+
+      if ranges.any?
+        percolation_query["range"] = ranges.each_with_object({}) { |(field, extents), hash|
+          es_range = {}
+          es_range["gt"] = extents["after"] unless extents["after"].blank?
+          es_range["lt"] = extents["before"] unless extents["before"].blank?
+
+          hash[field] = es_range
+        }
+      end
+
+      if percolation_query.empty?
+        percolation_query["match_all"] = {}
+      end
+
+      if filters.any?
+        es_filters ||= {
+          "and" => []
+        }
+
+        filters.each do |(field, values)|
+          Array(values).each do |value|
+            es_filters["and"] << {
+              "term" => {
+                field => value
+              }
+            }
+          end
+        end
+
+        percolation_query = {
+          "filtered" => {
+            "query" => percolation_query,
+            "filter" => es_filters,
+          }
+        }
+      end
+
+      es_query = {
+        "query" => percolation_query,
+        "type" => "edition",
+      }.merge(filters)
+
+      puts "Registering #{es_query}"
+      puts
+
+      @client.post(".percolator/#{uuid}", es_query.to_json, content_type: :json)
+    end
+
+    def percolate(doc)
+      links = doc["links"] || {}
+      facets = doc.slice(
+        "document_type",
+        "schema_name",
+      )
+
+      # doc["details"].each do |key, value|
+      #   doc["details.#{key}"] = value
+      # end
+
+      es_query = {
+        doc: doc.merge(links),
+      }
+
+      if facets.any? || links.any?
+        es_query[:filter] ||= {
+          or: []
+        }
+
+        facets.each do |(field, value)|
+          es_query[:filter][:or] << {
+            term: {
+              field => value
+            }
+          }
+        end
+
+        links.each do |(field, values)|
+          es_query[:filter][:or] << {
+            terms: {
+              field => values
+            }
+          }
+        end
+      end
+
+      json_result = @client.post("edition/_percolate", es_query.to_json)
+      puts "Percolating #{es_query}"
+      puts "Result #{JSON.parse(json_result)}"
+      puts
+      JSON.parse(json_result)
     end
 
     def link_to_type_and_id(link)

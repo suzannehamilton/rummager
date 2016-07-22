@@ -8,6 +8,14 @@
     "type": "identifier"
   },
 
+  "document_type": {
+    "type": "identifier"
+  },
+
+  "schema_name": {
+    "type": "identifier"
+  },
+
   "content_id": {
     "description": "The content_id of the item. This will not be present for all items, as most application do not send it.",
     "type": "identifier"
@@ -19,6 +27,10 @@
 
   "description": {
     "type": "searchable_text"
+  },
+
+  "details.open": {
+    "type": "identifier"
   },
 
   "link": {

@@ -5,6 +5,8 @@
     "content_id",
     "description",
     "format",
+    "document_type",
+    "schema_name",
     "indexable_content",
     "is_withdrawn",
     "latest_change_note",
