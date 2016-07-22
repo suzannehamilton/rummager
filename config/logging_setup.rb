@@ -17,6 +17,10 @@ end
 
 Logging.logger.root.add_appenders Logging.appenders.stdout
 
+unless ENV["RACK_ENV"] == "production"
+  Logging.logger.root.add_appenders Logging.appenders.file("log/#{ENV["RACK_ENV"]}.log")
+end
+
 if ENV['DEBUG'] || $DEBUG
   Logging.logger.root.level = :debug
 else

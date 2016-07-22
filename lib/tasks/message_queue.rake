@@ -12,6 +12,7 @@ namespace :message_queue do
     require 'govuk_message_queue_consumer'
     require 'indexer/message_processor'
     require 'statsd'
+    require 'logger'
 
     statsd_client = Statsd.new
     statsd_client.namespace = "govuk.app.rummager"
@@ -22,6 +23,7 @@ namespace :message_queue do
       queue_name: "rummager_to_be_indexed",
       processor: Indexer::MessageProcessor.new(statsd_client),
       statsd_client: statsd_client,
+      logger: Logging.logger.root,
     ).run
   end
 end

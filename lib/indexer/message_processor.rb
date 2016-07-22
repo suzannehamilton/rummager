@@ -24,6 +24,7 @@ module Indexer
         message.ack
       end
     rescue ProcessingError => e
+      log_exception(e)
       Airbrake.notify_or_ignore(e, parameters: message.payload)
       message.discard
     rescue StandardError => e
@@ -31,6 +32,7 @@ module Indexer
       # processing, we don't want to retry the message really quickly because
       # that might overload elasticsearch or other components. This should be
       # replaced by a retry mechanism with exponential back-off.
+      log_exception(e)
       Airbrake.notify_or_ignore(e, parameters: message.payload)
       sleep 1
       message.retry
@@ -53,6 +55,10 @@ module Indexer
       yield
 
       puts "Finished processing message [#{message.delivery_info.delivery_tag}]"
+    end
+
+    def log_exception(e)
+      Logging.logger.root.error "Uncaught exception in processor: \n\n #{e.class}: #{e.message}\n\n#{e.backtrace.join("\n")}"
     end
   end
 end
