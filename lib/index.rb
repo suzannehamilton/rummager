@@ -97,36 +97,19 @@ module SearchIndices
       bulk_index(document_hashes, options)
     end
 
-    # `bulk_index` is the only method that inserts/updates documents. The other
-    # indexing-methods like `add` and `amend` eventually end up
-    # calling this method.
-    def bulk_index(document_hashes_or_payload, options = {})
-      @client = build_client(options)
-      payload_generator = Indexer::BulkPayloadGenerator.new(@index_name, @search_config, @client, @is_content_index)
-      response = @client.bulk(index: @index_name, body: payload_generator.bulk_payload(document_hashes_or_payload))
+    # Insert or update documents using the elasticsearch _bulk API.
+    # Note that this method is used even if we only have one document to index.
+    def bulk_index(document_hashes, options = {})
+      _bulk(payload_generator.bulk_payload(document_hashes), options)
+    end
 
-      items = response["items"]
-      failed_items = items.select do |item|
-        data = item["index"] || item["create"]
-        data.has_key?("error")
-      end
-
-      if failed_items.any?
-        # Because bulk writes return a 200 status code regardless, we need to
-        # parse through the errors to detect responses that indicate a locked
-        # index
-        blocked_items = failed_items.select { |item|
-          locked_index_error?(item["index"]["error"])
-        }
-        if blocked_items.any?
-          raise IndexLocked
-        else
-          Airbrake.notify(Indexer::BulkIndexFailure.new, parameters: { failed_items: failed_items })
-          raise Indexer::BulkIndexFailure
-        end
-      end
-
-      response
+    # Generic method for calling the _bulk endpoint.
+    # Each item is either a command or a document hash.
+    # Commands are keyed by operation, eg index, delete, create, update
+    # See https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+    # for more information.
+    def bulk_commands(command_and_document_hashes, options = {})
+      _bulk(payload_generator.bulk_command_payload(command_and_document_hashes), options)
     end
 
     def amend(document_id, updates)
@@ -267,6 +250,39 @@ module SearchIndices
 
     def build_client(options = {})
       Services.elasticsearch(hosts: @base_uri, timeout: options[:timeout] || TIMEOUT_SECONDS)
+    end
+
+    # `bulk_index` is the only method that inserts/updates documents. The other
+    # indexing-methods like `add` and `amend` eventually end up
+    # calling this method.
+    def _bulk(payload, options = {})
+      @client = build_client(options)
+      payload_generator = Indexer::BulkPayloadGenerator.new(@index_name, @search_config, @client, @is_content_index)
+      response = @client.bulk(index: @index_name, body: payload_generator.bulk_payload(document_hashes_or_payload))
+
+      items = response["items"]
+      failed_items = items.select do |item|
+        data = item["index"] || item["create"]
+        data.has_key?("error")
+      end
+
+      if failed_items.any?
+        # Because bulk writes return a 200 status code regardless, we need to
+        # parse through the errors to detect responses that indicate a locked
+        # index
+        blocked_items = failed_items.select { |item|
+          locked_index_error?(item["index"]["error"])
+        }
+        if blocked_items.any?
+          raise IndexLocked
+        else
+          Airbrake.notify(Indexer::BulkIndexFailure.new, parameters: { failed_items: failed_items })
+          raise Indexer::BulkIndexFailure
+        end
+      end
+
+    def payload_generator
+      Indexer::BulkPayloadGenerator.new(@index_name, @search_config, @client, @is_content_index)
     end
   end
 end

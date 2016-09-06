@@ -154,7 +154,18 @@ class ElasticsearchIndexTest < MiniTest::Unit::TestCase
       headers: { 'Content-Type' => 'application/json' }
     )
 
-    @index.bulk_index(payload)
+    @index.bulk_commands(
+      [
+          { "index" => { "_type" => "edition", "_id" => "/foo/bar" } },
+          {
+            "_type" => "edition",
+            "link" => "/foo/bar",
+            "title" => "TITLE ONE",
+            "popularity" => 0.09090909090909091,
+            "format" => "edition"
+          },
+      ]
+    )
 
     assert_requested(request)
   end
