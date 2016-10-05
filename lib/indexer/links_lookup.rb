@@ -25,7 +25,7 @@ module Indexer
       links = find_links(content_id)
       return doc_hash unless links
 
-      doc_hash.merge(taggings_with_slugs(links))
+      doc_hash.merge(taggings_with_content_ids(links))
     end
 
   private
@@ -53,31 +53,19 @@ module Indexer
       end
     end
 
-    # Documents in rummager currently reference topics, browse pages and
-    # organisations by "slug", a concept that exists in Publisher and Whitehall.
-    # It does not exist in the publishing-api, so we need to infer the slug
-    # from the base path.
-    def taggings_with_slugs(links)
-      links_with_slugs = {}
+    def taggings_with_content_ids(links)
+      {
+        'specialist_sectors' => content_ids_for(links, 'topics'),
+        'mainstream_browse_pages'=> content_ids_for(links, 'mainstream_browse_pages'),
+        'organisations' => content_ids_for(links, 'organisations'),
+        'taxons' => content_ids_for(links, 'taxons'),
+      }
+    end
 
-      # We still call topics "specialist sectors" in rummager.
-      links_with_slugs["specialist_sectors"] = links["topics"].to_a.map do |content_item|
-        content_item['base_path'].sub('/topic/', '')
-      end
-
-      links_with_slugs["mainstream_browse_pages"] = links["mainstream_browse_pages"].to_a.map do |content_item|
-        content_item['base_path'].sub('/browse/', '')
-      end
-
-      links_with_slugs["organisations"] = links["organisations"].to_a.map do |content_item|
-        content_item['base_path'].sub('/government/organisations/', '').sub('/courts-tribunals/', '')
-      end
-
-      links_with_slugs["taxons"] = links["taxons"].to_a.map do |content_item|
+    def content_ids_for(links, link_type)
+      links[link_type].to_a.map do |content_item|
         content_item['content_id']
       end
-
-      links_with_slugs
     end
   end
 end

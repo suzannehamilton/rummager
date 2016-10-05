@@ -38,7 +38,7 @@ class ChangeNotificationProcessorTest < IntegrationTest
       expanded_links: {
         mainstream_browse_pages: [{
           title: "Bla",
-          base_path: "/browse/my-browse"
+          content_id: 'LINK-CONTENT-ID'
         }]
       },
     )
@@ -51,7 +51,7 @@ class ChangeNotificationProcessorTest < IntegrationTest
 
     assert_document_is_in_rummager({
       "link" => "/foo",
-      "mainstream_browse_pages" => ['my-browse'],
+      "mainstream_browse_pages" => ['LINK-CONTENT-ID'],
     })
   end
 end

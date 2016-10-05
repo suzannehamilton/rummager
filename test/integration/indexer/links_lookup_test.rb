@@ -49,27 +49,22 @@ class TaglookupDuringIndexingTest < IntegrationTest
         topics: [
           {
             "content_id" => "TOPIC-CONTENT-ID-1",
-            "base_path" => "/topic/my-topic/a",
           },
           {
             "content_id" => "TOPIC-CONTENT-ID-2",
-            "base_path" => "/topic/my-topic/b",
           }
         ],
         mainstream_browse_pages: [
           {
             "content_id" => "BROWSE-1",
-            "base_path" => "/browse/my-browse/1",
           }
         ],
         organisations: [
           {
             "content_id" => "ORG-1",
-            "base_path" => "/government/organisations/my-org/1",
           },
           {
             "content_id" => "ORG-2",
-            "base_path" => "/courts-tribunals/my-court",
           }
         ],
         taxons: [
@@ -87,9 +82,9 @@ class TaglookupDuringIndexingTest < IntegrationTest
 
     assert_document_is_in_rummager(
       "link" => "/foo/bar",
-      "specialist_sectors" => ["my-topic/a", "my-topic/b"],
-      "mainstream_browse_pages" => ["my-browse/1"],
-      "organisations" => ["my-org/1", "my-court"],
+      "specialist_sectors" => ["TOPIC-CONTENT-ID-1", "TOPIC-CONTENT-ID-2"],
+      "mainstream_browse_pages" => ["BROWSE-1"],
+      "organisations" => ["ORG-1", "ORG-2"],
       "taxons" => ["TAXON-1"],
     )
   end
@@ -101,7 +96,6 @@ class TaglookupDuringIndexingTest < IntegrationTest
         topics: [
           {
             "content_id" => "TOPIC-CONTENT-ID-1",
-            "base_path" => "/topic/my-topic/a",
           }
         ]
       }
@@ -115,7 +109,7 @@ class TaglookupDuringIndexingTest < IntegrationTest
     assert_document_is_in_rummager(
       "link" => "/my-base-path",
       "content_id" => "CONTENT-ID-OF-DOCUMENT",
-      "specialist_sectors" => ["my-topic/a"],
+      "specialist_sectors" => ["TOPIC-CONTENT-ID-1"],
     )
   end
 end
