@@ -45,13 +45,17 @@ class ElasticsearchIndexingTest < IntegrationTest
   end
 
   def test_tagging_organisations_to_self
-    stub_tagging_lookup
+    publishing_api_has_expanded_links(
+      content_id: 'content-id-my-organisation',
+      expanded_links: {},
+    )
 
     post "/documents", {
       "title" => "TITLE",
       "format" => "organisation",
       "slug" => "my-organisation",
       "link" => "/an-example-organisation",
+      "content_id" => "content-id-my-organisation"
     }.to_json
 
     assert_document_is_in_rummager({
@@ -59,24 +63,28 @@ class ElasticsearchIndexingTest < IntegrationTest
       "format" => "organisation",
       "slug" => "my-organisation",
       "link" => "/an-example-organisation",
-      "organisations" => ["my-organisation"],
+      "organisations" => ["content-id-my-organisation"],
     })
   end
 
   def test_adding_a_document_to_the_search_index_with_organisation_self_tagging
-    stub_tagging_lookup
+    publishing_api_has_expanded_links(
+      content_id: 'hmrc-content-id',
+      expanded_links: {},
+    )
 
     post "/documents", {
       'title' => 'HMRC',
       'link' => '/government/organisations/hmrc',
       'slug' => 'hmrc',
       'format' => 'organisation',
+      'content_id' => 'hmrc-content-id',
       'organisations' => [],
     }.to_json
 
     assert_document_is_in_rummager({
       "link" => "/government/organisations/hmrc",
-      "organisations" => ["hmrc"],
+      "organisations" => ["hmrc-content-id"],
     })
   end
 

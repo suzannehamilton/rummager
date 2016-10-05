@@ -8,13 +8,14 @@ class EntityExpanderTest < MiniTest::Unit::TestCase
     expandable_target = {
         "slug" => "rail-statistics",
         "link" => "/government/organisations/department-for-transport/series/rail-statistics",
-        "title" => "Rail statistics"
+        "title" => "Rail statistics",
+        "content_id" => 'content-id'
     }
 
-    registries = { organisations: { "rail-statistics" => expandable_target } }
+    registries = { organisations: mock(by_content_id: expandable_target) }
 
     result = Search::EntityExpander.new(registries).new_result(
-      { "organisations" => ["rail-statistics"] }
+      { "organisations" => ["content-id"] }
     )
 
     assert_equal result["organisations"].first, expandable_target

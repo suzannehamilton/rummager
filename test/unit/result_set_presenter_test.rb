@@ -34,7 +34,7 @@ class ResultSetPresenterTest < ShouldaUnitTestCase
       "fields" => {
         "title" => "Dairy farming and schemes",
         "link" => "/dairy-farming-and-schemes",
-        "policy_areas" => ["farming"],
+        "policy_areas" => ["farming-content-id"],
       },
     }]
   end
@@ -228,16 +228,18 @@ class ResultSetPresenterTest < ShouldaUnitTestCase
   context "results with a registry" do
     setup do
       policy_area_registry = {
-        "farming" => {
-          "link" => "/government/topics/farming",
-          "title" => "Farming"
-        }
+        "link" => "/government/topics/farming",
+        "title" => "Farming",
+        "slug" => 'farming',
+        "content_id" => "farming-content-id",
       }
 
       @output = Search::ResultSetPresenter.new(
         search_params: Search::QueryParameters.new(start: 0, return_fields: %w[policy_areas]),
         es_response: sample_es_response,
-        registries: { policy_areas: policy_area_registry },
+        registries: {
+          policy_areas: mock(by_content_id: policy_area_registry),
+        }
       ).present
     end
 
@@ -277,6 +279,7 @@ class ResultSetPresenterTest < ShouldaUnitTestCase
         "link" => "/government/topics/farming",
         "title" => "Farming",
         "slug" => "farming",
+        "content_id" => 'farming-content-id',
       }], result["policy_areas"])
     end
   end

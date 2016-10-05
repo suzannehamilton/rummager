@@ -11,6 +11,7 @@ class BaseRegistryTest < MiniTest::Unit::TestCase
 
   def example_document
     {
+      "content_id" => 'content-id-example-document',
       "slug" => "example-document",
       "link" => "/government/example-document",
       "title" => "Example document"
@@ -29,7 +30,9 @@ class BaseRegistryTest < MiniTest::Unit::TestCase
       .with("example-format", anything)
       .returns([example_document])
 
-    fetched_document = @base_registry["example-document"]
+    fetched_document =
+      @base_registry.by_content_id("content-id-example-document")
+
     assert_equal example_document, fetched_document
   end
 
@@ -37,14 +40,14 @@ class BaseRegistryTest < MiniTest::Unit::TestCase
     @index.expects(:documents_by_format)
       .with("example-format", sample_field_definitions(%w{slug link title content_id}))
 
-    @base_registry["example-document"]
+    @base_registry.by_content_id("content-id-example-document")
   end
 
   def test_returns_nil_if_document_collection_not_found
     @index.stubs(:documents_by_format)
       .with("example-format", anything)
       .returns([example_document])
-    assert_nil @base_registry["non-existent-document"]
+    assert_nil @base_registry.by_content_id("non-existent-document")
   end
 
   def test_document_enumerator_is_traversed_only_once
@@ -54,14 +57,14 @@ class BaseRegistryTest < MiniTest::Unit::TestCase
       .with("example-format", anything)
       .returns(document_enumerator)
       .once
-    assert @base_registry["example-document"]
-    assert @base_registry["example-document"]
+    assert @base_registry.by_content_id("content-id-example-document")
+    assert @base_registry.by_content_id("content-id-example-document")
   end
 
   def test_uses_cache
     # Make sure we're using TimedCache#get; TimedCache is tested elsewhere, so
     # we don't need to worry about cache expiry tests here.
     Search::TimedCache.any_instance.expects(:get).with.returns([example_document])
-    assert @base_registry["example-document"]
+    assert @base_registry.by_content_id("content-id-example-document")
   end
 end

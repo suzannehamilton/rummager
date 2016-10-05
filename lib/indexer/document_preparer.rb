@@ -91,9 +91,9 @@ module Indexer
       # of the organisation in the publishing api, since self-linking has
       # a very fuzzy meaning: ids in links can mean both the thing (HMRC)
       # and the content representing the thing (the HMRC home page).
-      if doc_hash["format"] == "organisation" && doc_hash["slug"]
+      if doc_hash["format"] == "organisation" && doc_hash["content_id"]
         doc_hash["organisations"] ||= []
-        doc_hash["organisations"] << doc_hash["slug"]
+        doc_hash["organisations"] << doc_hash["content_id"]
         doc_hash["organisations"].uniq!
       end
 

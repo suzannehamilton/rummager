@@ -27,7 +27,7 @@ module Search
       'policy_areas' => :policy_areas,
       'world_locations' => :world_locations,
       'specialist_sectors' => :specialist_sectors,
-      'people' => :people,
+      'people' => :people
     }.freeze
 
     def new_result(result)
@@ -37,8 +37,8 @@ module Search
         registry = registries[registry_name]
         next unless registry
 
-        result[field_name] = result[field_name].map do |slug|
-          item_from_registry_by_slug(registry, slug)
+        result[field_name] = result[field_name].map do |content_id|
+          item_from_registry_by_content_id(registry, content_id)
         end
       end
 
@@ -47,14 +47,10 @@ module Search
 
   private
 
-    def item_from_registry_by_slug(registry, slug)
-      expanded_item = registry[slug]
+    def item_from_registry_by_content_id(registry, content_id)
+      expanded_item = registry.by_content_id(content_id) || {}
 
-      if expanded_item
-        expanded_item.merge("slug" => slug)
-      else
-        { "slug" => slug }
-      end
+      expanded_item.merge("content_id" => content_id)
     end
   end
 end

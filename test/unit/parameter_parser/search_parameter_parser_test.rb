@@ -217,26 +217,26 @@ class SearchParameterParserTest < ShouldaUnitTestCase
   end
 
   should "understand filter paramers" do
-    p = SearchParameterParser.new({ "filter_organisations" => ["hm-magic"] }, @schema)
+    p = SearchParameterParser.new({ "filter_organisations" => ["hm-magic-content-id"] }, @schema)
 
     assert_equal("", p.error)
     assert p.valid?
     assert_equal(
       hash_including(filters: [
-        text_filter("organisations", ["hm-magic"])
+        text_filter("organisations", ["hm-magic-content-id"])
       ]),
       p.parsed_params,
     )
   end
 
   should "understand reject paramers" do
-    p = SearchParameterParser.new({ "reject_organisations" => ["hm-magic"] }, @schema)
+    p = SearchParameterParser.new({ "reject_organisations" => ["hm-magic-content-id"] }, @schema)
 
     assert_equal("", p.error)
     assert p.valid?
     assert_equal(
       hash_including(filters: [
-        text_filter("organisations", ["hm-magic"], true)
+        text_filter("organisations", ["hm-magic-content-id"], true)
       ]),
       p.parsed_params,
     )
@@ -244,23 +244,26 @@ class SearchParameterParserTest < ShouldaUnitTestCase
 
   should "understand some rejects and some filter paramers" do
     p = SearchParameterParser.new({
-      "reject_organisations" => ["hm-magic"],
-      "filter_mainstream_browse_pages" => ["cheese"],
+      "reject_organisations" => ["hm-magic-content-id"],
+      "filter_mainstream_browse_pages" => ["cheese-content-id"],
     }, @schema)
 
     assert_equal("", p.error)
     assert p.valid?
     assert_equal(
       hash_including(filters: [
-        text_filter("mainstream_browse_pages", ["cheese"]),
-        text_filter("organisations", ["hm-magic"], true),
+        text_filter("mainstream_browse_pages", ["cheese-content-id"]),
+        text_filter("organisations", ["hm-magic-content-id"], true),
       ]),
       p.parsed_params,
     )
   end
 
   should "understand multiple filter paramers" do
-    p = SearchParameterParser.new({ "filter_organisations" => ["hm-magic", "hmrc"] }, @schema)
+    p = SearchParameterParser.new(
+      { "filter_organisations" => ["hm-magic-content-id", "hmrc-content-id"] },
+      @schema
+    )
 
     assert_equal("", p.error)
     assert p.valid?
@@ -268,8 +271,8 @@ class SearchParameterParserTest < ShouldaUnitTestCase
       expected_params(
         filters: [
           text_filter("organisations", [
-              "hm-magic",
-              "hmrc",
+              "hm-magic-content-id",
+              "hmrc-content-id",
             ]
           )
         ],
@@ -292,7 +295,10 @@ class SearchParameterParserTest < ShouldaUnitTestCase
   end
 
   should "understand filter for missing field or specific value" do
-    p = SearchParameterParser.new({ "filter_organisations" => %w(_MISSING hmrc) }, @schema)
+    p = SearchParameterParser.new(
+      { "filter_organisations" => %w(_MISSING hmrc-content-id) },
+      @schema
+    )
 
     assert_equal("", p.error)
     assert p.valid?
@@ -301,14 +307,14 @@ class SearchParameterParserTest < ShouldaUnitTestCase
     assert_equal 1, filters.size
     assert_equal "organisations", filters[0].field_name
     assert_equal true, filters[0].include_missing
-    assert_equal ["hmrc"], filters[0].values
+    assert_equal ["hmrc-content-id"], filters[0].values
   end
 
   should "complain about disallowed filter fields" do
     p = SearchParameterParser.new(
       {
         "filter_spells" => ["levitation"],
-        "filter_organisations" => ["hm-magic"]
+        "filter_organisations" => ["hm-magic-content-id"]
       },
       @schema,
     )
@@ -316,7 +322,7 @@ class SearchParameterParserTest < ShouldaUnitTestCase
     assert_equal(%{"spells" is not a valid filter field}, p.error)
     assert !p.valid?
     assert_equal(
-      expected_params(filters: [text_filter("organisations", ["hm-magic"])]),
+      expected_params(filters: [text_filter("organisations", ["hm-magic-content-id"])]),
       p.parsed_params,
     )
   end
@@ -325,7 +331,7 @@ class SearchParameterParserTest < ShouldaUnitTestCase
     p = SearchParameterParser.new(
       {
         "reject_spells" => ["levitation"],
-        "reject_organisations" => ["hm-magic"]
+        "reject_organisations" => ["hm-magic-content-id"]
       },
       @schema,
     )
@@ -333,7 +339,7 @@ class SearchParameterParserTest < ShouldaUnitTestCase
     assert_equal(%{"spells" is not a valid reject field}, p.error)
     assert !p.valid?
     assert_equal(
-      expected_params(filters: [text_filter("organisations", ["hm-magic"], true)]),
+      expected_params(filters: [text_filter("organisations", ["hm-magic-content-id"], true)]),
       p.parsed_params,
     )
   end

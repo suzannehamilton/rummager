@@ -11,6 +11,7 @@ class SpecialistSectorRegistryTest < MiniTest::Unit::TestCase
 
   def oil_and_gas
     {
+      "content_id" => 'content-id-licensing',
       "link" => "/topic/oil-and-gas/licensing",
       "slug" => "oil-and-gas/licensing",
       "title" => "Licensing"
@@ -21,7 +22,7 @@ class SpecialistSectorRegistryTest < MiniTest::Unit::TestCase
     @index.stubs(:documents_by_format)
       .with("specialist_sector", anything)
       .returns([oil_and_gas])
-    sector = @specialist_sector_registry["oil-and-gas/licensing"]
+    sector = @specialist_sector_registry.by_content_id("content-id-licensing")
     assert_equal oil_and_gas, sector
   end
 
@@ -29,14 +30,14 @@ class SpecialistSectorRegistryTest < MiniTest::Unit::TestCase
     @index.expects(:documents_by_format)
       .with("specialist_sector", sample_field_definitions(%w{link slug title content_id}))
       .returns([])
-    @specialist_sector_registry["oil-and-gas/licensing"]
+    @specialist_sector_registry.by_content_id("content-id-licensing")
   end
 
   def test_returns_nil_if_sector_not_found
     @index.stubs(:documents_by_format)
       .with("specialist_sector", anything)
       .returns([oil_and_gas])
-    sector = @specialist_sector_registry["foo"]
+    sector = @specialist_sector_registry.by_content_id("foo")
     assert_nil sector
   end
 

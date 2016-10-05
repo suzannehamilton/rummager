@@ -89,7 +89,7 @@ class IntegrationTest < MiniTest::Unit::TestCase
       }
       fields["mainstream_browse_pages"] = [i.to_s]
       if i % 2 == 0
-        fields["specialist_sectors"] = ["farming"]
+        fields["specialist_sectors"] = ["farming-content-id"]
       end
       if short_index_name == "government"
         fields["public_timestamp"] = "#{i + 2000}-01-01T00:00:00"
