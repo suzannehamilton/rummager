@@ -14,6 +14,10 @@ def hasLint() {
   sh(script: "grep 'govuk-lint' Gemfile.lock", returnStatus: true) == 0
 }
 
+def isGem() {
+  sh(script: "ls | grep gemspec", returnStatus: true) == 0
+}
+
 def govukBuild(sassLint = true) {
   def govuk = load '/var/lib/jenkins/groovy_scripts/govuk_jenkinslib.groovy'
 
@@ -71,7 +75,11 @@ def govukBuild(sassLint = true) {
     }
 
     stage("bundle install") {
-      govuk.bundleApp()
+      if (isGem()) {
+        govuk.bundleGem()
+      } else {
+        govuk.bundleApp()
+      }
     }
 
     if (hasLint()) {
@@ -106,11 +114,19 @@ def govukBuild(sassLint = true) {
       }
     }
 
-    stage("Push release tag") {
-      govuk.pushTag(repoName, env.BRANCH_NAME, 'release_' + env.BUILD_NUMBER)
-    }
+    if (isGem()) {
+      stage("Publish Gem") {
+        govuk.publishGem(repoName, env.BRANCH_NAME)
+      }
+    } else {
+      stage("Push release tag") {
+        govuk.pushTag(repoName, env.BRANCH_NAME, 'release_' + env.BUILD_NUMBER)
+      }
 
-    govuk.deployIntegration(repoName, env.BRANCH_NAME, 'release', 'deploy')
+      stage("Deploy to integration") {
+        govuk.deployIntegration(repoName, env.BRANCH_NAME, 'release', 'deploy')
+      }
+    }
 
   } catch (e) {
     currentBuild.result = "FAILED"
