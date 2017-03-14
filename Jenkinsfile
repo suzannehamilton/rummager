@@ -10,6 +10,10 @@ def hasAssets() {
   sh(script: "test -d app/assets", returnStatus: true) == 0
 }
 
+def hasLint() {
+  sh(script: "grep 'govuk-lint' Gemfile.lock", returnStatus: true) == 0
+}
+
 def govukBuild(sassLint = true) {
   def govuk = load '/var/lib/jenkins/groovy_scripts/govuk_jenkinslib.groovy'
 
@@ -78,8 +82,12 @@ def govukBuild(sassLint = true) {
       govuk.bundleApp()
     }
 
-    stage("rubylinter") {
-      govuk.rubyLinter()
+    if (hasLint()) {
+      stage("rubylinter") {
+        govuk.rubyLinter()
+      }
+    } else {
+      echo "WARNING: You do not have Ruby linting turned on. Please install govuk-lint and enable."
     }
 
     if (hasAssets() && sassLint) {
@@ -87,7 +95,7 @@ def govukBuild(sassLint = true) {
         govuk.sassLinter()
       }
     } else {
-      echo "WARNING: You do not sass-linting turned on. Please upgrade."
+      echo "WARNING: You do not have SASS linting turned on. Please install govuk-lint and enable."
     }
 
     if (hasDatabase()) {
