@@ -25,14 +25,6 @@ def govukBuild(sassLint = true) {
         numToKeepStr: '50')
       ),
     [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-    [$class: 'ThrottleJobProperty',
-      categories: [],
-      limitOneJobWithMatchingParams: true,
-      maxConcurrentPerNode: 1,
-      maxConcurrentTotal: 0,
-      paramsToUseForLimit: repoName,
-      throttleEnabled: true,
-      throttleOption: 'category'],
     [$class: 'ParametersDefinitionProperty',
       parameterDefinitions: [
         [$class: 'BooleanParameterDefinition',
