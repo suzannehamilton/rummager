@@ -10,7 +10,7 @@ def hasAssets() {
   sh(script: "test -d app/assets", returnStatus: true) == 0
 }
 
-def run(sassLint = true) {
+def govukBuild(sassLint = true) {
   def govuk = load '/var/lib/jenkins/groovy_scripts/govuk_jenkinslib.groovy'
 
   repoName = JOB_NAME.split('/')[0]
@@ -123,5 +123,5 @@ def run(sassLint = true) {
 }
 
 node {
-  run()
+  govukBuild()
 }
