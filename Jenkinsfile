@@ -1,7 +1,13 @@
 #!/usr/bin/env groovy
 
+// Do we have a database?
 def hasDatabase() {
   sh(script: "test -e config/database.yml", returnStatus: true) == 0
+}
+
+// If the project has Rails-style assets
+def hasAssets() {
+  sh(script: "test -d app/assets", returnStatus: true) == 0
 }
 
 def run(repoName, sassLint = true) {
@@ -92,8 +98,10 @@ def run(repoName, sassLint = true) {
       govuk.runTests("default")
     }
 
-    stage("Precompile assets") {
-      govuk.precompileAssets()
+    if (hasAssets()) {
+      stage("Precompile assets") {
+        govuk.precompileAssets()
+      }
     }
 
     stage("Push release tag") {
