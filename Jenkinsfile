@@ -10,8 +10,10 @@ def hasAssets() {
   sh(script: "test -d app/assets", returnStatus: true) == 0
 }
 
-def run(repoName, sassLint = true) {
+def run(sassLint = true) {
   def govuk = load '/var/lib/jenkins/groovy_scripts/govuk_jenkinslib.groovy'
+
+  repoName = JOB_NAME.split('/')[0]
 
   properties([
     buildDiscarder(
@@ -80,7 +82,7 @@ def run(repoName, sassLint = true) {
       govuk.rubyLinter()
     }
 
-    if (sassLint) {
+    if (hasAssets() && sassLint) {
       stage("sasslinter") {
         govuk.sassLinter()
       }
@@ -121,5 +123,5 @@ def run(repoName, sassLint = true) {
 }
 
 node {
-  run('rummager', false)
+  run()
 }
