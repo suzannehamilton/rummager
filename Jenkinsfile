@@ -1,8 +1,10 @@
 #!/usr/bin/env groovy
 
-REPOSITORY = 'rummager'
+def hasDatabase() {
+  sh(script: "test -e config/database.yml", returnStatus: true) == 0
+}
 
-node {
+def run(repoName, sassLint = true) {
   def govuk = load '/var/lib/jenkins/groovy_scripts/govuk_jenkinslib.groovy'
 
   properties([
@@ -16,18 +18,52 @@ node {
       limitOneJobWithMatchingParams: true,
       maxConcurrentPerNode: 1,
       maxConcurrentTotal: 0,
-      paramsToUseForLimit: 'Rummager',
+      paramsToUseForLimit: repoName,
       throttleEnabled: true,
       throttleOption: 'category'],
+    [$class: 'ParametersDefinitionProperty',
+      parameterDefinitions: [
+        [$class: 'BooleanParameterDefinition',
+          name: 'IS_SCHEMA_TEST',
+          defaultValue: false,
+          description: 'Identifies whether this build is being triggered to test a change to the content schemas'],
+        [$class: 'StringParameterDefinition',
+          name: 'SCHEMA_BRANCH',
+          defaultValue: 'deployed-to-production',
+          description: 'The branch of govuk-content-schemas to test against']]
+    ],
   ])
 
   try {
+    govuk.initializeParameters([
+      'IS_SCHEMA_TEST': 'false',
+      'SCHEMA_BRANCH': 'deployed-to-production',
+    ])
+
+    if (!govuk.isAllowedBranchBuild(env.BRANCH_NAME)) {
+      return
+    }
+
     stage("Checkout") {
       checkout scm
     }
 
+    stage("Clean up workspace") {
+      govuk.cleanupGit()
+    }
+
     stage("git merge") {
       govuk.mergeMasterBranch()
+    }
+
+    stage("Configure environment") {
+      govuk.setEnvar("RAILS_ENV", "test")
+      govuk.setEnvar("RACK_ENV", "test")
+    }
+
+    stage("Set up content schema dependency") {
+      govuk.contentSchemaDependency(env.SCHEMA_BRANCH)
+      govuk.setEnvar("GOVUK_CONTENT_SCHEMAS_PATH", "tmp/govuk-content-schemas")
     }
 
     stage("bundle install") {
@@ -35,38 +71,36 @@ node {
     }
 
     stage("rubylinter") {
-      govuk.rubyLinter('app test lib')
+      govuk.rubyLinter()
+    }
+
+    if (sassLint) {
+      stage("sasslinter") {
+        govuk.sassLinter()
+      }
+    } else {
+      echo "WARNING: You do not sass-linting turned on. Please upgrade."
+    }
+
+    if (hasDatabase()) {
+      stage("Set up the DB") {
+        govuk.runRakeTask("db:drop db:create db:schema:load")
+      }
     }
 
     stage("Run tests") {
-      govuk.setEnvar('USE_SIMPLECOV', 'true')
-      govuk.setEnvar('RACK_ENV', 'test')
-      govuk.runRakeTask('ci:setup:minitest test --trace')
+      govuk.runTests("default")
     }
 
-    if (env.BRANCH_NAME == 'master') {
-      stage("Push release tag") {
-        govuk.pushTag(REPOSITORY, env.BRANCH_NAME, 'release_' + env.BUILD_NUMBER)
-      }
-
-      stage("Deploy to Integration") {
-        govuk.deployIntegration(REPOSITORY, env.BRANCH_NAME, 'release', 'deploy')
-      }
-
-      stage("Publish JUnit test result report") {
-        junit 'test/reports/*.xml'
-      }
-
-      stage("Publish Rcov report") {
-        step([
-          $class: 'RcovPublisher',
-          reportDir: "coverage/rcov",
-          targets: [
-            [metric: "CODE_COVERAGE", healthy: 80, unhealthy: 0, unstable: 0]
-          ]
-        ])
-      }
+    stage("Precompile assets") {
+      govuk.precompileAssets()
     }
+
+    stage("Push release tag") {
+      govuk.pushTag(repoName, env.BRANCH_NAME, 'release_' + env.BUILD_NUMBER)
+    }
+
+    govuk.deployIntegration(repoName, env.BRANCH_NAME, 'release', 'deploy')
 
   } catch (e) {
     currentBuild.result = "FAILED"
@@ -76,5 +110,8 @@ node {
           sendToIndividuals: true])
     throw e
   }
+}
 
+node {
+  run('rummager', false)
 }
