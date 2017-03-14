@@ -10,8 +10,15 @@ def hasAssets() {
   sh(script: "test -d app/assets", returnStatus: true) == 0
 }
 
-def govukBuild(sassLint = true) {
+def shouldSass() {
+  Yaml configFileYml = new Yaml()
+  echo configFileYml.load("govuk.yml")
+}
+
+def govukBuild() {
   def govuk = load '/var/lib/jenkins/groovy_scripts/govuk_jenkinslib.groovy'
+
+  shouldSass()
 
   repoName = JOB_NAME.split('/')[0]
 
