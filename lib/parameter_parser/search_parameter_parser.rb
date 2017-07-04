@@ -205,6 +205,7 @@ private
 
     filter_class = {
       "text" => TextFieldFilter,
+      "boolean" => BooleanFieldFilter,
       "date" => DateFieldFilter,
     }.fetch(filter_type)
 
@@ -288,6 +289,12 @@ private
   class TextFieldFilter < Filter
     def type
       "string"
+    end
+  end
+
+  class BooleanFieldFilter < Filter
+    def type
+      "boolean"
     end
   end
 

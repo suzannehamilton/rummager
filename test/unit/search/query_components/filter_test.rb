@@ -10,6 +10,11 @@ class FilterTest < ShouldaUnitTestCase
     SearchParameterParser::DateFieldFilter.new(field_name, values, false)
   end
 
+  def boolean_filter(field_name, value)
+    # TODO: Accept single value in constructor?
+    SearchParameterParser::BooleanFieldFilter.new(field_name, [value], false)
+  end
+
   def text_filter(field_name, values)
     SearchParameterParser::TextFieldFilter.new(field_name, values, false)
   end
@@ -42,6 +47,19 @@ class FilterTest < ShouldaUnitTestCase
       assert_equal(
         result,
         { "range" => { "field_with_date" => { "from" => "2014-04-01", "to" => "2014-04-02" } } }
+      )
+    end
+
+    should "append boolean filters" do
+      builder = QueryComponents::Filter.new(
+        make_search_params([boolean_filter("has_official_document", true)])
+      )
+
+      result = builder.payload
+
+      assert_equal(
+        result,
+        { "terms" => { "has_official_document" => [true] } }
       )
     end
   end

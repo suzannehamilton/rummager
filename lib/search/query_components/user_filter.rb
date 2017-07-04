@@ -46,6 +46,8 @@ module QueryComponents
       case filter.type
       when "string"
         es_filters << terms_filter(field_name, values)
+      when "boolean"
+        es_filters << terms_filter(field_name, values)
       when "date"
         es_filters << date_filter(field_name, values.first)
       else
