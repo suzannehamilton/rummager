@@ -20,10 +20,9 @@ module Indexer
           command_hash = JSON.parse(command)
           doc_hash = JSON.parse(doc)
 
-          # note: what happens if the key is not index?
+          raise "Command hash is missing index: #{command_hash.inspect}" unless command_hash["index"]
           combined_hash = command_hash["index"].merge(doc_hash)
           queue.push([combined_hash])
-
         end
       end
     end
