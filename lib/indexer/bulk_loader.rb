@@ -17,7 +17,7 @@ module Indexer
     def load_from(iostream)
       build_and_switch_index do |queue|
         in_even_sized_batches(iostream) do |batch|
-          mapped_batch = batch.each_slice(2).map do |command, doc|
+          mapped_batch = batch.map do |command, doc|
             command_hash = JSON.parse(command)
             doc_hash = JSON.parse(doc)
 
@@ -133,7 +133,7 @@ module Indexer
     end
 
     def byte_size(lines)
-      lines.inject(0) { |memo, l| memo + l.size }
+      lines.flatten.inject(0) { |memo, l| memo + l.size }
     end
 
     # Breaks the given input stream into batches of line pairs of at least
@@ -142,8 +142,7 @@ module Indexer
     def in_even_sized_batches(iostream, batch_size = @iostream_batch_size, &_block)
       chunk = []
       iostream.each_line.each_slice(2) do |command, document|
-        chunk << command
-        chunk << document
+        chunk << [command, document]
         if byte_size(chunk) >= batch_size
           yield chunk
           chunk = []
