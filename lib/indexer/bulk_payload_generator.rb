@@ -18,11 +18,7 @@ module Indexer
     #
     # See <http://www.elasticsearch.org/guide/reference/api/bulk/>
     def bulk_payload(document_hashes_or_payload)
-      if document_hashes_or_payload.is_a?(Array)
-        index_items_from_document_hashes(document_hashes_or_payload)
-      else
-        index_items_from_raw_string(document_hashes_or_payload)
-      end
+      index_items_from_document_hashes(document_hashes_or_payload)
     end
 
   private
@@ -56,31 +52,6 @@ module Indexer
         popularities,
         @is_content_index
       )
-    end
-
-    def self.index_items_from_raw_string(payload)
-      actions = []
-      links = []
-      payload.each_line.each_slice(2).map do |command, doc|
-        command_hash = JSON.parse(command)
-        doc_hash = JSON.parse(doc)
-        actions << [command_hash, doc_hash]
-        links << doc_hash["link"]
-      end
-      popularities = lookup_popularities(links.compact)
-      actions.flat_map { |command_hash, doc_hash|
-        if command_hash.keys == ["index"]
-          [
-            command_hash,
-            index_doc(doc_hash, popularities),
-          ]
-        else
-          [
-            command_hash,
-            doc_hash,
-          ]
-        end
-      }
     end
   end
 end
