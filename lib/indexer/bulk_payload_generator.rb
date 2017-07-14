@@ -58,7 +58,7 @@ module Indexer
       )
     end
 
-    def index_items_from_raw_string(payload)
+    def self.index_items_from_raw_string(payload)
       actions = []
       links = []
       payload.each_line.each_slice(2).map do |command, doc|

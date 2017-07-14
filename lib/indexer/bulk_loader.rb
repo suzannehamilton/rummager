@@ -1,5 +1,6 @@
 require 'time'
 require 'indexer/comparer'
+require 'pry'
 
 module Indexer
   class BulkLoader
@@ -15,8 +16,14 @@ module Indexer
 
     def load_from(iostream)
       build_and_switch_index do |queue|
-        in_even_sized_batches(iostream) do |lines|
-          queue.push(lines.join(""))
+        in_even_sized_batches(iostream) do |command, doc|
+          command_hash = JSON.parse(command)
+          doc_hash = JSON.parse(doc)
+
+          # note: what happens if the key is not index?
+          combined_hash = command_hash["index"].merge(doc_hash)
+          queue.push([combined_hash])
+
         end
       end
     end
