@@ -16,13 +16,15 @@ module Indexer
 
     def load_from(iostream)
       build_and_switch_index do |queue|
-        in_even_sized_batches(iostream) do |command, doc|
-          command_hash = JSON.parse(command)
-          doc_hash = JSON.parse(doc)
+        in_even_sized_batches(iostream) do |batch|
+          mapped_batch = batch.each_slice(2).map do |command, doc|
+            command_hash = JSON.parse(command)
+            doc_hash = JSON.parse(doc)
 
-          raise "Command hash is missing index: #{command_hash.inspect}" unless command_hash["index"]
-          combined_hash = command_hash["index"].merge(doc_hash)
-          queue.push([combined_hash])
+            raise "Command hash is missing index: #{command_hash.inspect}" unless command_hash["index"]
+            command_hash["index"].merge(doc_hash)
+          end
+          queue.push(mapped_batch)
         end
       end
     end

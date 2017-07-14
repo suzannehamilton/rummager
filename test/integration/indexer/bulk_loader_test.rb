@@ -23,6 +23,35 @@ class BulkLoaderTest < IntegrationTest
     )
   end
 
+  def test_indexes_multiple_documents
+    bulk_loader = Indexer::BulkLoader.new(
+      app.settings.search_config,
+      TestIndexHelpers::DEFAULT_INDEX_NAME
+    )
+
+    payload = ""
+    payload << index_payload(
+      "title" => "The old title",
+      "link" => "/some-link",
+    )
+    payload << index_payload(
+      "title" => "The new title",
+      "link" => "/other-link",
+    )
+
+    bulk_loader.load_from(StringIO.new(payload))
+
+    assert_document_is_in_rummager(
+      "title" => "The old title",
+      "link" => "/some-link",
+    )
+    assert_document_is_in_rummager(
+      "title" => "The new title",
+      "link" => "/other-link",
+    )
+
+  end
+
   def test_updates_an_existing_document
     commit_document("mainstream_test", {
       "title" => "The old title",
