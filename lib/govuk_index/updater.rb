@@ -1,7 +1,10 @@
 module GovukIndex
   class Updater
     SCROLL_BATCH_SIZE = 500
-    PROCESSOR_BATCH_SIZE = 25
+    # Chosen to give an average batch size of around 5 MB. The Elasticsearch
+    # docs recommend sending between 5 and 15 MB in each bulkl index request.
+    # https://www.elastic.co/guide/en/elasticsearch/guide/current/indexing-performance.html#_using_and_sizing_bulk_requests
+    PROCESSOR_BATCH_SIZE = 250
     TIMEOUT_SECONDS = 30
 
     class ImplementationRequired < StandardError; end
