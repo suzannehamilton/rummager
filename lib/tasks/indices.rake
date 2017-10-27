@@ -40,7 +40,7 @@ namespace :rummager do
         ignore: %w(popularity is_withdrawn),
         filtered_format: filtered_format,
       },
-      include_version: true
+      # include_version: true
     ).run
     puts comparer.stats
   end

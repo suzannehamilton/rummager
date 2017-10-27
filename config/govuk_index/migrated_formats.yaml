@@ -19,7 +19,7 @@ indexable:
 #- dfid_research_output
 #- drug_safety_update
 #- employment_appeal_tribunal_decision
-#- employment_tribunal_decision
+- employment_tribunal_decision
 #- european_structural_investment_fund
 #- international_development_fund
 #- maib_report

@@ -2,7 +2,7 @@ class ScrollEnumerator < Enumerator
   # How long to hold a scroll cursor open between requests
   # We want to keep this low (eg, 1 minute), because scroll contexts can be
   # quite expensive.
-  SCROLL_TIMEOUT_MINUTES = 1
+  SCROLL_TIMEOUT_MINUTES = 4
 
   # The number of documents to retrieve at once.
   # Gotcha: this is actually the number of documents per shard, so there will
