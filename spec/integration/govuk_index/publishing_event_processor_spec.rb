@@ -18,8 +18,7 @@ RSpec.describe 'GovukIndex::PublishingEventProcessorTest' do
   it "should_save_new_document_to_elasticsearch" do
     allow(GovukIndex::MigratedFormats).to receive(:indexable?).and_return(true)
     random_example = generate_random_example(
-      payload: { document_type: "help_page", payload_version: 123 },
-      regenerate_if: ->(example) { example["publishing_app"] == "smartanswers" }
+      payload: { document_type: "help_page", payload_version: 123 }
     )
 
     @queue.publish(random_example.to_json, content_type: "application/json")
@@ -38,8 +37,7 @@ RSpec.describe 'GovukIndex::PublishingEventProcessorTest' do
   it "should_include_popularity_when_available" do
     allow(GovukIndex::MigratedFormats).to receive(:indexable?).and_return(true)
     random_example = generate_random_example(
-      payload: { document_type: "help_page", payload_version: 123 },
-      regenerate_if: ->(example) { example["publishing_app"] == "smartanswers" }
+      payload: { document_type: "help_page", payload_version: 123 }
     )
 
     document_count = 4

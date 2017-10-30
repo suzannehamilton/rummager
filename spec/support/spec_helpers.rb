@@ -2,7 +2,6 @@ require "gds_api/test_helpers/publishing_api_v2"
 
 module SpecHelpers
   include GdsApi::TestHelpers::PublishingApiV2
-  EXAMPLE_GENERATOR_RETRIES = 5
 
   def self.included(base)
     base.after do
@@ -37,19 +36,14 @@ module SpecHelpers
     commit_index("page-traffic_test")
   end
 
-  def generate_random_example(schema: "help_page", payload: {}, excluded_fields: [], regenerate_if: ->(_example) { false }, retry_attempts: EXAMPLE_GENERATOR_RETRIES)
+  def generate_random_example(schema: "help_page", payload: {}, excluded_fields: [])
     # just in case RandomExample does not generate a type field
 
     payload[:document_type] ||= schema
-    retry_attempts.times do
-      random_example = GovukSchemas::RandomExample.for_schema(notification_schema: schema) do |hash|
-        hash.merge!(payload.stringify_keys)
-        hash.delete_if { |k, _| excluded_fields.include?(k) }
-        hash
-      end
-
-      return random_example unless regenerate_if.call(random_example)
+    GovukSchemas::RandomExample.for_schema(notification_schema: schema) do |hash|
+      hash.merge!(payload.stringify_keys)
+      hash.delete_if { |k, _| excluded_fields.include?(k) }
+      hash
     end
-    raise RandomExampleError, "Could not generate example"
   end
 end

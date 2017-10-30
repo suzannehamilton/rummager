@@ -18,8 +18,7 @@ RSpec.describe 'SpecialistFormatTest' do
   it "specialist_publisher_finders_are_correctly_indexed" do
     random_example = generate_random_example(
       schema: "finder",
-      payload: { document_type: "finder" },
-      regenerate_if: ->(example) { example["publishing_app"] == "smartanswers" }
+      payload: { document_type: "finder" }
     )
 
     allow(GovukIndex::MigratedFormats).to receive(:indexable_formats).and_return(["finder"])
@@ -55,8 +54,7 @@ RSpec.describe 'SpecialistFormatTest' do
     document_types.sample(3).each do |specialist_document_type|
       random_example = generate_random_example(
         schema: "specialist_document",
-        payload: { document_type: specialist_document_type },
-        regenerate_if: ->(example) { example["publishing_app"] == "smartanswers" }
+        payload: { document_type: specialist_document_type }
       )
       allow(GovukIndex::MigratedFormats).to receive(:indexable_formats).and_return([specialist_document_type])
 
@@ -72,8 +70,7 @@ RSpec.describe 'SpecialistFormatTest' do
 
     random_example = generate_random_example(
       schema: "specialist_document",
-      payload: { document_type: publisher_document_type },
-      regenerate_if: ->(example) { example["publishing_app"] == "smartanswers" }
+      payload: { document_type: publisher_document_type }
     )
     allow(GovukIndex::MigratedFormats).to receive(:indexable_formats).and_return([publisher_document_type])
 
@@ -85,8 +82,7 @@ RSpec.describe 'SpecialistFormatTest' do
   it "finders_email_signup_are_never_indexed" do
     random_example = generate_random_example(
       schema: "finder_email_signup",
-      payload: { document_type: "finder_email_signup" },
-      regenerate_if: ->(example) { example["publishing_app"] == "smartanswers" }
+      payload: { document_type: "finder_email_signup" }
     )
 
     @queue.publish(random_example.to_json, content_type: "application/json")
