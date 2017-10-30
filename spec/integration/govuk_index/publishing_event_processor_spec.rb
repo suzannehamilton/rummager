@@ -35,21 +35,6 @@ RSpec.describe 'GovukIndex::PublishingEventProcessorTest' do
     expect(@channel.acknowledged_state[:acked].count).to eq(1)
   end
 
-  it "not_indexing_when_publishing_app_is_smart_answers" do
-    allow(GovukIndex::MigratedFormats).to receive(:indexable?).and_return(true)
-    random_example = generate_random_example(
-      schema: 'special_route',
-      payload: { document_type: "transaction", payload_version: 123, publishing_app: "smartanswers" },
-    )
-
-    @queue.publish(random_example.to_json, content_type: "application/json")
-    commit_index 'govuk_test'
-
-    expect {
-      fetch_document_from_rummager(id: random_example["base_path"], index: "govuk_test", type: 'edition')
-    }.to raise_error(Elasticsearch::Transport::Transport::Errors::NotFound)
-  end
-
   it "should_include_popularity_when_available" do
     allow(GovukIndex::MigratedFormats).to receive(:indexable?).and_return(true)
     random_example = generate_random_example(
