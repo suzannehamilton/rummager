@@ -62,15 +62,18 @@ namespace :delete do
   end
 
   desc "
-  Delete all documents by format from an index.
+  Delete all documents by specified field from an index.
   Usage
-  rake 'delete:by_format[format_name, elasticsearch_index]'
+  rake 'delete:by_field[field_name, field_value, elasticsearch_index]'
   "
-  task :by_format, [:format, :index_name] do |_, args|
-    format = args[:format]
+  task :by_field, [:field_name, :field_value, :index_name] do |_, args|
+    field_name = args[:field_name]
+    field_value = args[:field_value]
     index  = args[:index_name]
 
-    if format.nil?
+    if field_name.nil?
+      puts 'Specify field for deletion'
+    elsif field_value.nil?
       puts 'Specify format for deletion'
     elsif index.nil?
       puts 'Specify an index'
@@ -79,7 +82,7 @@ namespace :delete do
 
       delete_commands = ScrollEnumerator.new(
         client: client,
-        search_body: { query: { term: { format: format } } },
+        search_body: { query: { term: { field_name.to_sym => field_value } } },
         batch_size: 500,
         index_names: index
       ) { |hit| hit }.map do |hit|
@@ -93,9 +96,9 @@ namespace :delete do
       end
 
       if delete_commands.empty?
-        puts "No #{format} documents to delete"
+        puts "No #{field_name}:#{field_value} documents to delete"
       else
-        puts "Deleting #{delete_commands.count} #{format} documents from #{index} index (in batches of 1000)"
+        puts "Deleting #{delete_commands.count} #{field_name}:#{field_value} documents from #{index} index (in batches of 1000)"
         delete_commands.each_slice(1000) do |slice|
           client.bulk(body: slice)
         end
