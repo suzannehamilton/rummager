@@ -22,13 +22,15 @@ module QueryComponents
 
     def boost_filters
       boosts = property_boosts + [time_boost]
-      boosts << specialist_sector_boost if @search_params.format_weighting_b_variant?
+      if @search_params.format_weighting_b_variant?
+        boosts << search_user_need_document_supertype_boost
+      end
       boosts
     end
 
-    def specialist_sector_boost
+    def search_user_need_document_supertype_boost
       {
-        filter: { term: { format: "specialist_sector" } },
+        filter: { term: { search_user_need_document_supertype: 'core' } },
         boost_factor: 2.5
       }
     end
